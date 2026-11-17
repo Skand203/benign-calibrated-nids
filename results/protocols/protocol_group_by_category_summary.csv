@@ -1,1 +1,49 @@
-Algorithm,Attack Category,Protocol Group,Mean Detection Rate,Std Detection Rate,Records
+Algorithm,Attack Category,Protocol Group,Mean Detection Rate,Std Detection Rate,Record Count
+Isolation Forest,Analysis,Seen,0.0,0.0,66
+Isolation Forest,Analysis,Unseen,0.040262,0.040167,611
+Isolation Forest,Backdoor,Seen,0.075,0.031869,80
+Isolation Forest,Backdoor,Unseen,0.048509,0.048343,503
+Isolation Forest,DoS,Seen,0.099445,0.008155,1442
+Isolation Forest,DoS,Unseen,0.024783,0.025957,2647
+Isolation Forest,Exploits,Seen,0.081475,0.012493,8270
+Isolation Forest,Exploits,Unseen,0.032145,0.028761,2862
+Isolation Forest,Fuzzers,Seen,0.092992,0.010123,4880
+Isolation Forest,Fuzzers,Unseen,0.039932,0.039562,1182
+Isolation Forest,Generic,Seen,0.645842,0.06463,18830
+Isolation Forest,Generic,Unseen,0.092683,0.020406,41
+Isolation Forest,Reconnaissance,Seen,0.00454,0.000998,3216
+Isolation Forest,Reconnaissance,Unseen,0.024286,0.022218,280
+Isolation Forest,Shellcode,Seen,0.000529,0.001183,378
+Isolation Forest,Worms,Seen,0.113636,0.016071,44
+LOF,Analysis,Seen,0.857576,0.084087,66
+LOF,Analysis,Unseen,0.581342,0.044693,611
+LOF,Backdoor,Seen,0.4175,0.036012,80
+LOF,Backdoor,Unseen,0.655666,0.050007,503
+LOF,DoS,Seen,0.404022,0.053384,1442
+LOF,DoS,Unseen,0.459917,0.026069,2647
+LOF,Exploits,Seen,0.488416,0.075761,8270
+LOF,Exploits,Unseen,0.498672,0.03197,2862
+LOF,Fuzzers,Seen,0.09709,0.024563,4880
+LOF,Fuzzers,Unseen,0.606937,0.047748,1182
+LOF,Generic,Seen,0.76598,0.108719,18830
+LOF,Generic,Unseen,0.473171,0.013359,41
+LOF,Reconnaissance,Seen,0.057463,0.01394,3216
+LOF,Reconnaissance,Unseen,0.407857,0.021038,280
+LOF,Shellcode,Seen,0.041799,0.006033,378
+LOF,Worms,Seen,0.259091,0.025913,44
+One-Class SVM,Analysis,Seen,0.066667,0.013552,66
+One-Class SVM,Analysis,Unseen,0.071686,0.005717,611
+One-Class SVM,Backdoor,Seen,0.1525,0.013693,80
+One-Class SVM,Backdoor,Unseen,0.082704,0.006533,503
+One-Class SVM,DoS,Seen,0.174341,0.009221,1442
+One-Class SVM,DoS,Unseen,0.064979,0.009035,2647
+One-Class SVM,Exploits,Seen,0.142636,0.011388,8270
+One-Class SVM,Exploits,Unseen,0.071978,0.007404,2862
+One-Class SVM,Fuzzers,Seen,0.138893,0.003802,4880
+One-Class SVM,Fuzzers,Unseen,0.067513,0.004649,1182
+One-Class SVM,Generic,Seen,0.599469,0.007245,18830
+One-Class SVM,Generic,Unseen,0.170732,0.029872,41
+One-Class SVM,Reconnaissance,Seen,0.03209,0.002482,3216
+One-Class SVM,Reconnaissance,Unseen,0.072857,0.01118,280
+One-Class SVM,Shellcode,Seen,0.034921,0.002213,378
+One-Class SVM,Worms,Seen,0.204545,0.0,44

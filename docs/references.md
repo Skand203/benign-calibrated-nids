@@ -1,4 +1,4 @@
-# Bibliographic References and Verification Registry
+# Bibliographic References and Citation Registry
 
 **Target Venue Context:** *SN Computer Science* (Springer Nature)  
 **Citation Style:** Springer Nature Vancouver / Numbered Reference Style  
@@ -8,9 +8,9 @@
 
 ## 1. Overview
 
-This document records the academic literature cited throughout the research project and its accompanying manuscripts. Each entry has been cross-referenced against authoritative digital libraries (IEEE Xplore, ACM Digital Library, SpringerLink, USENIX, and Crossref) to supply verified author names, venues, publication dates, and persistent Digital Object Identifiers (DOIs).
+This document records the bibliographic references and persistent Digital Object Identifier (DOI) links for academic literature cited across this research project and its accompanying manuscripts.
 
-Where available, active hyperlinked DOIs are provided. Researchers consulting these works are advised to confirm volume, page, or conference proceedings numbers directly with primary publisher indices when formatting submissions for specific target venues.
+Where available, active hyperlinked DOIs and standard bibliographic fields (authors, publication venue, year, volume, and page range) are compiled below. Researchers consulting these works are advised to verify publication metadata and citation formatting against official publisher records before final manuscript submission.
 
 ---
 

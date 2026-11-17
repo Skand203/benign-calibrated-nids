@@ -36,7 +36,7 @@ Three foundational one-class anomaly detection algorithms are evaluated under co
 - **Isolation Forest (Tree-Based Partitioning):**
   - Number of estimators: $n_{\text{estimators}} = 200$
   - Subsample per tree: `max_samples="auto"` (scikit-learn default, evaluating to $\min(256, n) = 256$ for $n = 5,000$)
-  - Sampling: Bootstrap without replacement
+  - Sampling: Tree subsampling without replacement
   - Scoring: Negated `score_samples()` (higher score monotonically denotes higher anomaly severity)
   - Random state: Seed-pinned (`[0, 21, 42, 123, 2025]`)
 - **Local Outlier Factor (LOF) (Density-Based Neighbourhoods):**
@@ -135,7 +135,7 @@ Evaluated across all 9 attack categories ([`results/categories/attack_category_d
 While tree and kernel models experience sharp drops on unseen protocols (partially confounded with difficult DoS and Exploit types), LOF maintains steady detection ($53.27\%$ vs. $51.45\%$), demonstrating density resilience on continuous numerical dimensions even when categorical dimensions default to zeros.
 
 ### F. Supplementary Diagnostic: LOF Score Magnitudes on Seed 42
-Detailed diagnostic inspection (Cells 12–28) on Seed 42 revealed that extreme LOF calibration scores ($\sim 10^5$) were driven by sparse ARP protocol transactions occurring in tight local clusters where training neighbours had near-zero distance to other training points, resulting in massive neighbour local reachability densities ($LRD$). Deduplicating training observations reduced peak scores by orders of magnitude while preserving overall ranking ROC-AUC ($0.8645 \to 0.8672$). This demonstrates that local density anomalies in network traffic are sensitive to discrete transactional replication.
+Detailed diagnostic inspection (Cells 12–28) on Seed 42 revealed that extreme LOF calibration scores ($\sim 10^6$, peaking at 917,870.04) were driven by sparse ARP protocol transactions occurring in tight local clusters where training neighbours had near-zero distance to other training points, resulting in massive neighbour local reachability densities ($LRD$). Deduplicating training observations reduced peak scores by orders of magnitude while preserving overall ranking ROC-AUC ($0.8645 \to 0.8672$). This demonstrates that local density anomalies in network traffic are sensitive to discrete transactional replication.
 
 ### G. Supplementary Analysis: Oracle Matched-FPR Upper Bound
 To isolate calibration transfer error from inherent scoring separation limits, an oracle test-label-informed threshold selection was executed ([`results/oracle/oracle_matched_fpr_summary.csv`](results/oracle/oracle_matched_fpr_summary.csv)):
