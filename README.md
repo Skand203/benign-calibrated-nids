@@ -35,7 +35,7 @@ Three foundational one-class anomaly detection algorithms are evaluated under co
 
 - **Isolation Forest (Tree-Based Partitioning):**
   - Number of estimators: $n_{\text{estimators}} = 200$
-  - Subsample per tree: $\min(256, n)$
+  - Subsample per tree: `max_samples="auto"` (scikit-learn default, evaluating to $\min(256, n) = 256$ for $n = 5,000$)
   - Sampling: Bootstrap without replacement
   - Scoring: Negated `score_samples()` (higher score monotonically denotes higher anomaly severity)
   - Random state: Seed-pinned (`[0, 21, 42, 123, 2025]`)
@@ -80,19 +80,19 @@ Evaluations are conducted on the widely cited **UNSW-NB15** network intrusion be
 
 ## 5. Main Empirical Findings
 
-### A. Threshold-Independent Ranking Performance
-Across the 82,332 official test records (5-seed mean $\pm$ standard deviation):
+### A. Primary Experiment: Five-Seed Threshold-Independent Ranking
+Evaluated across the 82,332 official test records using the primary NumPy choice sampling protocol (`notebooks/UNSW_NB15_Final_Experiments.ipynb`, Cell 62; exported in [`results/main/controlled_comparison_summary.csv`](results/main/controlled_comparison_summary.csv)):
 
-| Algorithm | ROC-AUC | Average Precision (AP) |
-| :--- | :---: | :---: |
-| **Isolation Forest** | $0.7847 \pm 0.0060$ | $0.8152 \pm 0.0056$ |
-| **Local Outlier Factor (LOF)** | $\mathbf{0.8551 \pm 0.0082}$ | $\mathbf{0.8404 \pm 0.0129}$ |
-| **One-Class SVM** | $0.6384 \pm 0.0089$ | $0.7116 \pm 0.0030$ |
+| Algorithm | ROC-AUC (mean ± std) | Average Precision (mean ± std) | Primary Result File |
+| :--- | :---: | :---: | :--- |
+| **Isolation Forest** | $0.7847 \pm 0.0060$ | $0.8152 \pm 0.0056$ | [`results/main/controlled_comparison_summary.csv`](results/main/controlled_comparison_summary.csv) |
+| **Local Outlier Factor (LOF)** | $\mathbf{0.8551 \pm 0.0082}$ | $\mathbf{0.8404 \pm 0.0129}$ | [`results/main/controlled_comparison_summary.csv`](results/main/controlled_comparison_summary.csv) |
+| **One-Class SVM** | $0.6384 \pm 0.0089$ | $0.7116 \pm 0.0030$ | [`results/main/controlled_comparison_summary.csv`](results/main/controlled_comparison_summary.csv) |
 
 *LOF achieves superior global ranking due to its density-ratio formulation, which accommodates multi-modal benign clusters without creating artificial global hulls.*
 
-### B. Threshold Calibration Transfer Divergence
-Thresholds calibrated to enforce target FPRs on the 11,200 benign calibration set systematically diverge when transferred to the 82,332 test set:
+### B. Primary Experiment: Threshold Calibration Transfer Divergence
+Thresholds calibrated to enforce target FPRs on the 11,200 benign calibration set systematically diverge when transferred to the 82,332 test set ([`results/main/controlled_comparison_summary.csv`](results/main/controlled_comparison_summary.csv)):
 
 | Algorithm | Target FPR | Calibration FPR | Achieved Test FPR | Detection Rate | Alert Rate |
 | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -110,24 +110,37 @@ Thresholds calibrated to enforce target FPRs on the 11,200 benign calibration se
 | **One-Class SVM** | 10.0% | 10.01% | $12.37\% \pm 0.21\%$ | $32.43\% \pm 0.44\%$ | $23.41\% \pm 0.29\%$ |
 
 - **Critical Operational Trade-off:** While LOF achieves the highest overall ROC-AUC, its detection rate collapses to just **1.30%** at the conservative 1.0% calibration target.
-- **Benign Score Distribution Shift:** A two-sample Kolmogorov-Smirnov test comparing benign calibration scores against benign test scores across all 5 seeds confirms a statistically significant shift (mean $D = 0.1028$, $p < 10^{-65}$). Test benign traffic exhibits heavier anomaly score tails, causing empirical test FPRs to overshoot targets by 1.4 to 5.7 percentage points.
+- **Benign Score Distribution Shift:** A two-sample Kolmogorov-Smirnov test comparing benign calibration scores against benign test scores across all 5 seeds confirms a statistically significant shift (mean $D = 0.1028$, $p < 10^{-65}$; [`results/diagnostics/ks_distribution_comparison.csv`](results/diagnostics/ks_distribution_comparison.csv)). Test benign traffic exhibits heavier anomaly score tails, causing empirical test FPRs to overshoot targets by 1.4 to 5.7 percentage points.
 
-### C. Threat Heterogeneity & Attack Category Disparities (5% Target)
+### C. Supplementary Experiment: Attack Category Heterogeneity (5% Target)
+Evaluated across all 9 attack categories ([`results/categories/attack_category_detection_summary.csv`](results/categories/attack_category_detection_summary.csv)):
 - **Generic Attacks Dominate Metrics:** Generic attacks comprise 41.6% of attack traffic and are detected with high recall ($60.3\%$ to $83.8\%$), heavily inflating aggregate detection metrics.
 - **Stealthy Attacks are Missed:** Stealthy threats are virtually undetected: Reconnaissance detection is under 8.3% across all models (0.59% for Isolation Forest), and Shellcode detection is strictly 0.00% for Isolation Forest and under 5.2% for LOF.
 - **Multi-Vector Threat Separation:** LOF decisively outperforms Isolation Forest and One-Class SVM on Analysis ($62.63\%$ vs. $3.49\%$ and $7.59\%$), Backdoor ($63.84\%$ vs. $4.91\%$ and $9.61\%$), and DoS ($43.55\%$ vs. $5.03\%$ and $10.90\%$).
 
-### D. Benchmark Duplication & Sensitivity
-- Row-hash auditing reveals that **28,386 test records (34.48%) are exact duplicates**. Duplication is heavily concentrated in attacks (56.44% duplicate) versus benign traffic (7.57% duplicate).
+### D. Supplementary Experiment: Benchmark Duplication & Sensitivity
+- Row-hash auditing reveals that **28,386 test records (34.48%) are exact duplicates** ([`results/duplicates/duplicate_audit_results.csv`](results/duplicates/duplicate_audit_results.csv)). Duplication is heavily concentrated in attacks (56.44% duplicate) versus benign traffic (7.57% duplicate).
 - Exactly **6 feature-vector hash groups (14 records total)** carry conflicting labels (Normal vs. Fuzzers).
 - In a deduplicated evaluation of **53,940 unique non-conflicting feature representatives**, detection rates drop by more than half across all algorithms (IF: $30.29\% \to 14.02\%$; LOF: $55.27\% \to 33.61\%$; OCSVM: $31.50\% \to 17.15\%$).
 
-### E. Protocol Familiarity & LOF Resilience
-- The test set contains 8,126 attack records featuring transport protocols (`proto`) absent from benign training data (zero-encoded by `OneHotEncoder`).
-- While Isolation Forest (36.17% down to 3.25%) and One-Class SVM (36.39% down to 7.02%) exhibit sharp observational detection drops on unseen protocols (partially confounded with difficult DoS and Exploit types), LOF maintains identical detection ($53.27\%$ on seen vs. $51.45\%$ on unseen), demonstrating density resilience on continuous numerical dimensions.
+### E. Supplementary Experiment: Protocol Familiarity & LOF Resilience
+*Methodological Note on Sampling:* The protocol group analysis is a supplementary investigation executed in Cell 51 using pandas dataframe `.sample(n=5000, random_state=seed)` on the benign training dataframe (whereas the primary benchmark in Cell 62 uses NumPy choice index sampling on preprocessed feature matrices). Both methods draw valid, reproducible 5,000-record samples; results are exported in [`results/protocols/protocol_group_detection_summary.csv`](results/protocols/protocol_group_detection_summary.csv) and [`results/protocols/protocol_group_per_seed_runs.csv`](results/protocols/protocol_group_per_seed_runs.csv):
 
-### F. Diagnostic Investigation: LOF Score Magnitudes on Seed 42
+| Algorithm | Seen Protocols (37,206 attacks) | Unseen Protocols (8,126 attacks) | Disparity (Unseen − Seen) | Export File |
+| :--- | :---: | :---: | :---: | :--- |
+| **Isolation Forest** | $36.17\% \pm 2.94\%$ | $3.25\% \pm 3.10\%$ | $-32.92\%$ | [`results/protocols/protocol_group_detection_summary.csv`](results/protocols/protocol_group_detection_summary.csv) |
+| **Local Outlier Factor (LOF)** | $\mathbf{53.27\% \pm 5.17\%}$ | $\mathbf{51.45\% \pm 3.38\%}$ | $\mathbf{-1.82\%}$ | [`results/protocols/protocol_group_detection_summary.csv`](results/protocols/protocol_group_detection_summary.csv) |
+| **One-Class SVM** | $36.39\% \pm 0.44\%$ | $7.02\% \pm 0.76\%$ | $-29.37\%$ | [`results/protocols/protocol_group_detection_summary.csv`](results/protocols/protocol_group_detection_summary.csv) |
+
+While tree and kernel models experience sharp drops on unseen protocols (partially confounded with difficult DoS and Exploit types), LOF maintains steady detection ($53.27\%$ vs. $51.45\%$), demonstrating density resilience on continuous numerical dimensions even when categorical dimensions default to zeros.
+
+### F. Supplementary Diagnostic: LOF Score Magnitudes on Seed 42
 Detailed diagnostic inspection (Cells 12–28) on Seed 42 revealed that extreme LOF calibration scores ($\sim 10^5$) were driven by sparse ARP protocol transactions occurring in tight local clusters where training neighbours had near-zero distance to other training points, resulting in massive neighbour local reachability densities ($LRD$). Deduplicating training observations reduced peak scores by orders of magnitude while preserving overall ranking ROC-AUC ($0.8645 \to 0.8672$). This demonstrates that local density anomalies in network traffic are sensitive to discrete transactional replication.
+
+### G. Supplementary Analysis: Oracle Matched-FPR Upper Bound
+To isolate calibration transfer error from inherent scoring separation limits, an oracle test-label-informed threshold selection was executed ([`results/oracle/oracle_matched_fpr_summary.csv`](results/oracle/oracle_matched_fpr_summary.csv)):
+- At 5.0% matched FPR, oracle detection rates are: IF = 27.38%, LOF = 43.47%, One-Class SVM = 27.58%.
+- *Non-deployable:* This analysis requires ground-truth test labels and serves solely as an upper-bound diagnostic.
 
 ---
 
@@ -135,34 +148,45 @@ Detailed diagnostic inspection (Cells 12–28) on Seed 42 revealed that extreme 
 
 ```text
 benign-calibrated-nids/
-├── README.md                           # Comprehensive project overview & documentation
+├── README.md                           # Comprehensive empirical overview, methodology & results
 ├── LICENSE                             # Open-source MIT License
 ├── CITATION.cff                        # Machine-readable citation metadata
-├── requirements.txt                    # Exact verified dependencies
-├── .gitignore                          # Git hygiene (excludes large CSVs, venv, caches)
+├── requirements.txt                    # Verified Python dependencies (Python 3.11.9 stack)
+├── .gitignore                          # Clean exclusions (data CSVs, .venv, caches, drafts)
 │
 ├── notebooks/
 │   └── UNSW_NB15_Final_Experiments.ipynb  # Primary executed experimental notebook
 │
-├── results/
+├── src/                                # Modular, reusable pipeline code
+│   ├── preprocessing/
+│   │   └── pipeline.py                 # ColumnTransformer (StandardScaler + OneHotEncoder)
+│   ├── models/
+│   │   └── detectors.py                # Isolation Forest (auto/256), LOF (novelty), One-Class SVM
+│   ├── evaluation/
+│   │   └── calibration.py              # Batched scoring & empirical quantile calibration
+│   └── utils/
+│
+├── results/                            # Audited, consistent final experimental outputs
 │   ├── main/                           # Primary multi-seed transfer & ranking results
-│   │   ├── controlled_comparison_results.csv
-│   │   ├── controlled_comparison_summary.csv
-│   │   ├── calibration_validation_all_runs.csv
-│   │   └── calibration_validation_summary.csv
+│   │   ├── controlled_comparison_results.csv   # Per-seed main ranking & transfer runs
+│   │   ├── controlled_comparison_summary.csv   # 5-seed mean/std ranking & transfer metrics
+│   │   ├── calibration_validation_all_runs.csv # Calibration validation per-seed runs
+│   │   └── calibration_validation_summary.csv  # Calibration validation summary
 │   ├── categories/                     # Granular 9-category detection outputs
-│   │   ├── attack_category_detection_results.csv
-│   │   ├── attack_category_detection_summary.csv
-│   │   ├── attack_category_all_seeds.csv
-│   │   └── attack_category_summary.csv
+│   │   ├── attack_category_detection_results.csv # Per-seed 9-category detection rates
+│   │   ├── attack_category_detection_summary.csv # 5-seed mean/std 9-category metrics
+│   │   ├── attack_category_all_seeds.csv         # Preliminary per-seed category metrics
+│   │   └── attack_category_summary.csv           # Category summary table
 │   ├── duplicates/                     # Feature-vector duplication audit
-│   │   └── duplicate_audit_results.csv
+│   │   └── duplicate_audit_results.csv           # 42-feature row-hash duplicate audit
 │   ├── protocols/                      # Seen vs. unseen protocol group outputs
-│   │   └── protocol_group_detection_summary.csv
+│   │   ├── protocol_group_detection_summary.csv  # Overall protocol group summary
+│   │   ├── protocol_group_per_seed_runs.csv      # Per-seed protocol group runs
+│   │   └── protocol_group_by_category_summary.csv# Category-stratified protocol breakdown
 │   ├── oracle/                         # Upper-bound matched-actual-FPR analysis
-│   │   └── oracle_matched_fpr_summary.csv
+│   │   └── oracle_matched_fpr_summary.csv        # Upper-bound matched-actual-FPR comparison
 │   └── diagnostics/                    # Statistical shift & distribution tests
-│       └── ks_distribution_comparison.csv
+│       └── ks_distribution_comparison.csv        # Kolmogorov-Smirnov score shift statistics
 │
 ├── figures/                            # Publication-ready 300 DPI visualizations
 │   ├── fig1_threshold_transfer.png
@@ -178,12 +202,18 @@ benign-calibrated-nids/
 │   └── references.md                   # Verified academic literature registry
 │
 ├── archive/                            # Historical exploratory notebooks & preliminary sweeps
-│   ├── experiment.ipynb
-│   ├── comparitive_experiments.ipynb
-│   └── master_experimental_results.csv
+│   ├── experiment.ipynb                # Initial single-detector exploratory notebook
+│   ├── comparative_experiments.ipynb   # Intermediate comparative sweeps
+│   ├── master_experimental_results.csv # Contamination sweep summary
+│   ├── robustness_all_runs.csv         # Contamination sweep runs
+│   ├── robustness_summary.csv          # Contamination summary statistics
+│   ├── threshold_transfer_all_runs.csv # Preliminary threshold transfer runs
+│   ├── threshold_transfer_summary.csv  # Preliminary threshold transfer summary
+│   ├── isolation_forest_results.csv    # Early IF preliminary results
+│   └── ranking_metrics.csv             # Early ranking metrics
 │
 └── data/
-    └── README.md                       # Instructions for obtaining UNSW-NB15 dataset
+    └── README.md                       # Download & placement instructions for UNSW-NB15
 ```
 
 ---
@@ -192,7 +222,7 @@ benign-calibrated-nids/
 
 ### Prerequisites
 - Python 3.11 (tested on Python 3.11.9, 64-bit)
-- Standard scientific stack (scikit-learn 1.9.1, pandas 3.1.1, NumPy 2.4.6, SciPy 1.17.1)
+- Standard scientific stack (`scikit-learn==1.9.1`, `pandas==3.1.1`, `numpy==2.4.6`, `scipy==1.17.1`)
 
 ### Quick Start
 ```bash

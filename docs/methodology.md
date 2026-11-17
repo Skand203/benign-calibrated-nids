@@ -1,28 +1,27 @@
-# Scientific Audit Report
+# Scientific Methodology and Verification Report
 
-**Title of Investigation:** Scientific Audit, Empirical Verification, and Numerical Reconciliation of the Benign-Trained Network Anomaly Detection Study  
-**Evaluated Manuscript:** `research_paper.docx` / `Revised_Research_Paper.docx`  
+**Title of Investigation:** Empirical Verification, Numerical Reconciliation, and Methodology Audit of the Benign-Trained Network Anomaly Detection Study  
+**Scope:** Primary multi-seed evaluation, supplementary analyses, and historical exploratory scripts  
 **Dataset:** UNSW-NB15 Benchmark (`UNSW_NB15_training-set.csv`, `UNSW_NB15_testing-set.csv`)  
-**Auditor Role:** Senior Academic Researcher, Cybersecurity & Machine Learning Reviewer, Technical Editor  
-**Date of Audit:** 16 November 2026  
-**Target Venue:** *SN Computer Science* (Springer Nature)  
+**Date of Verification:** 17 November 2026  
 
 ---
 
 ## 1. Executive Summary
 
-This scientific audit report presents a line-by-line verification of the empirical experiments, statistical calculations, data structures, and algorithmic evaluations underlying the research paper titled *"An Empirical Evaluation of Threshold Sensitivity and Calibration Transfer in Benign-Trained Network Anomaly Detection"*.
+This methodology report provides detailed documentation of the empirical experimental design, statistical calculations, data structures, and algorithmic evaluations underlying the study titled *"An Empirical Evaluation of Threshold Sensitivity and Calibration Transfer in Benign-Trained Network Anomaly Detection"*.
 
-The primary objective of this audit is to identify, document, and correct all factual, numerical, and interpretative inaccuracies in the initial draft (`research_paper.docx`), while establishing complete, auditable traceability back to raw experimental data files, executed Jupyter notebooks (`UNSW_NB15_Final_Experiments.ipynb`, `comparitive_experiments.ipynb`, `experiment.ipynb`), and exported CSV summaries.
+The primary objective of this documentation is to establish complete, auditable traceability between the reported findings and the underlying code modules, executed Jupyter notebooks (`notebooks/UNSW_NB15_Final_Experiments.ipynb` and archived notebooks), and exported CSV result files. Internal draft notes from preliminary working revisions were systematically verified against the authoritative executed notebook cells to ensure full factual and numerical fidelity.
 
 ### Summary of Audit Status
-1. **Calibration FPR Reporting (Table II):** Corrected. In the initial draft, One-Class SVM calibration FPR was incorrectly listed as 5.00% across all four targets (1%, 3%, 5%, 10%). The true 5-seed mean calibration FPRs have been verified and reconciled: Target 1% = 1.0000% ± 0.0000%, Target 3% = 3.0000% ± 0.0000%, Target 5% = 5.0036% ± 0.0080%, Target 10% = 10.0125% ± 0.0120%.
+1. **Calibration FPR Reporting (Table 2):** Corrected. In the initial draft, One-Class SVM calibration FPR was incorrectly listed as 5.00% across all four targets (1%, 3%, 5%, 10%). The true 5-seed mean calibration FPRs have been verified and reconciled: Target 1% = 1.0000% ± 0.0000%, Target 3% = 3.0000% ± 0.0000%, Target 5% = 5.0036% ± 0.0080%, Target 10% = 10.0125% ± 0.0120%.
 2. **Duplicate & Conflicting Records (Cell 62–65):** Corrected. The initial draft stated that "six conflicting-label groups account for 28,392 records." The audit reveals that exactly 6 feature-vector hash groups have conflicting ground-truth labels, encompassing exactly **14 records** (6 attack records belonging to Fuzzers and 8 benign records belonging to Normal). Deduplication leaves **53,940 unique non-conflicting feature representatives**, meaning 28,392 total records were excluded (28,378 redundant duplicates + 14 conflicting records).
-3. **Kolmogorov-Smirnov Shift Test (Cell 17 of `experiment.ipynb`):** Corrected and Clarified. The initial draft attributed the KS test to LOF and ambiguously described the test partitions. The audit verifies that the two-sample KS test was conducted strictly on **Isolation Forest anomaly scores** comparing **benign calibration scores ($N = 11,200$)** against **benign test scores ($N = 37,000$)** across all 5 seeds. Mean KS statistic is 0.1028 (range: 0.0939 to 0.1078, $p < 10^{-65}$).
+3. **Kolmogorov-Smirnov Shift Test (Cell 17 of `archive/experiment.ipynb`):** Corrected and Clarified. The initial draft attributed the KS test to LOF and ambiguously described the test partitions. The audit verifies that the two-sample KS test was conducted strictly on **Isolation Forest anomaly scores** comparing **benign calibration scores ($N = 11,200$)** against **benign test scores ($N = 37,000$)** across all 5 seeds. Mean KS statistic is 0.1028 (range: 0.0939 to 0.1078, $p < 10^{-65}$).
 4. **Execution Environment & Timing:** Corrected. The initial draft reported Python 3.10 and average scoring times of 0.72 s, 1.19 s, and 2.32 s without runtime hardware specifications or fitting times. The audited notebook environment was **Python 3.11.9** (scikit-learn 1.9.1, pandas 3.1.1, NumPy 2.4.6, SciPy 1.17.1). Benchmarked fitting times on 5,000 records are: IF = 0.270 ± 0.033 s, LOF = 0.066 ± 0.003 s, OCSVM = 0.075 ± 0.010 s. Scoring times over 93,532 records (cal + test) are: IF = 0.720 ± 0.020 s, LOF = 1.191 ± 0.018 s, OCSVM = 2.324 ± 0.024 s. These timings are explicitly contextualized as hardware-dependent empirical runtimes rather than fundamental complexity bounds.
 5. **Causal vs. Observational Language:** Refined. Detection deficits on unseen protocols (8,126 attack records) are explicitly reframed as observational rather than proven causal effects of one-hot zero-vector encoding, as the unseen protocols are heavily confounded with inherently difficult attack types (DoS and Exploits).
 6. **Data Partition Terminology:** Refined. The official train/test partition is strictly described as an unseen evaluation split rather than temporal drift or operational deployment.
 7. **Statistical Independence:** Wilson score intervals are explicitly qualified as approximate record-level bounds due to duplicate feature vectors.
+8. **Sampling Methodology Distinction:** The primary experiment exclusively utilizes `np.random.default_rng(seed).choice(len(X_fit_full), size=5000, replace=False)`. Supplementary protocol experiments in Cell 51 utilize pandas `.sample(n=5000, random_state=seed)` on the benign dataframe; both select valid 5,000-record draws, and this operational distinction is formally documented.
 
 ---
 
@@ -31,7 +30,7 @@ The primary objective of this audit is to identify, document, and correct all fa
 ### 2.1 Issue A: Incorrect One-Class SVM Calibration FPR Values
 
 #### Description of Error in Prior Manuscript
-In Table II of the original draft, the `Cal. FPR` column for One-Class SVM was reported as `5.00%` across all target FPR levels (1.0%, 3.0%, 5.0%, and 10.0%). This error stemmed from an editorial miscopying where the nominal model training hyperparameter ($\nu = 0.05$) was conflated with the post-hoc empirical quantile calibration FPR.
+In Table 2 of the original draft, the `Cal. FPR` column for One-Class SVM was reported as `5.00%` across all target FPR levels (1.0%, 3.0%, 5.0%, and 10.0%). This error stemmed from an editorial miscopying where the nominal model training hyperparameter ($\nu = 0.05$) was conflated with the post-hoc empirical quantile calibration FPR.
 
 #### Experimental Source of Truth
 The post-hoc threshold selection procedure computes the $(1 - \alpha)$ empirical quantile of the model's raw anomaly scores over the 11,200 held-out benign calibration records:
@@ -60,7 +59,7 @@ The prompt noted: *"The expected five-seed achieved calibration FPR values were 
 Upon auditing Cell 72 of `UNSW_NB15_Final_Experiments.ipynb` (the oracle matched-actual-FPR experiment), we discover that **8.942%** was the achieved *test* FPR for One-Class SVM when targeting a test FPR of 10.0%. In the oracle ROC evaluation, discrete step-jumps in One-Class SVM decision values prevented the test FPR from hitting 10.000% exactly, stopping at 8.942% to avoid exceeding the 10% constraint. However, in the *calibration transfer* experiment, the calibration FPR is 10.0125% and the achieved test FPR on the official test set is 12.3654%.
 
 #### Revision Action
-Table II in `Revised_Research_Paper.md` and `Revised_Research_Paper.docx` has been updated with the verified calibration FPR values: 1.00%, 3.00%, 5.00%, and 10.01% (or 8.94% in Table VI's oracle comparison).
+Table 2 in the research paper and repository README records the verified calibration FPR values: 1.00%, 3.00%, 5.00%, and 10.01% (or 8.94% in Table 6's oracle comparison).
 
 ---
 
@@ -98,8 +97,8 @@ Section 5.5 of the revised manuscript accurately differentiates the 6 conflictin
 #### Description of Error in Prior Manuscript
 The prior draft asserted that a two-sample Kolmogorov-Smirnov test confirmed distribution shift for Local Outlier Factor (LOF) with test statistics between 0.094 and 0.108 and $p < 10^{-65}$.
 
-#### Experimental Source of Truth (Cell 17, `experiment.ipynb`)
-Auditing `experiment.ipynb` reveals the exact implementation of the KS test:
+#### Experimental Source of Truth (Cell 17, `archive/experiment.ipynb`)
+Auditing `archive/experiment.ipynb` reveals the exact implementation of the KS test:
 ```python
 # Cell 17 in experiment.ipynb
 from scipy.stats import ks_2samp

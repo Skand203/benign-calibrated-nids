@@ -1,1 +1,7 @@
-Algorithm,Attack Category,Protocol Group,Mean Detection Rate,Std Detection Rate,Records
+Algorithm,Protocol Group,Attacks Evaluated,Mean Detection Rate,Std Detection Rate
+Isolation Forest,Seen Protocols,37206,0.3617,0.0294
+Isolation Forest,Unseen Protocols,8126,0.0325,0.0310
+LOF,Seen Protocols,37206,0.5327,0.0517
+LOF,Unseen Protocols,8126,0.5145,0.0338
+One-Class SVM,Seen Protocols,37206,0.3639,0.0044
+One-Class SVM,Unseen Protocols,8126,0.0702,0.0076
