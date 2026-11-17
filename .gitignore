@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter Notebook checkpoints & cache
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Datasets (Do not track large raw CSVs in public Git)
+UNSW_NB15_training-set.csv
+UNSW_NB15_testing-set.csv
+*.csv.gz
+*.csv.zip
+
+# Manuscripts and internal draft folders
+FINAL_RESEARCH_PAPER/
+FINAL_RESEARCH_PAPER_REVISED/
+IEEE-template.docx
+IEEE-template-copy.docx
+*.docx
+
+# Environment variables & secrets
+.env
+.env.*
+secrets.json
+*.pem
+*.key
+
+# Editor and OS files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
