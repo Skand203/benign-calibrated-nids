@@ -4,6 +4,14 @@ title: "An Empirical Evaluation of Threshold Sensitivity and Calibration Transfe
 authors:
   - family-names: "Shukla"
     given-names: "Skand"
+  - family-names: "Verma"
+    given-names: "Kapil"
+  - family-names: "Singh"
+    given-names: "Yash Vardhan"
+  - family-names: "Tewari"
+    given-names: "Vyom Shanker"
+  - family-names: "Pandey"
+    given-names: "Varchas Kumar"
 repository-code: "https://github.com/Skand203/benign-calibrated-nids"
 abstract: "This repository provides the complete experimental code, statistical analysis pipelines, and evaluation outputs for an empirical investigation into benign-trained anomaly detection on the UNSW-NB15 benchmark. The research evaluates Isolation Forest, Local Outlier Factor (LOF), and One-Class SVM, focusing on calibration transfer stability, threat heterogeneity, and benchmark structural artifacts."
 keywords:

@@ -237,7 +237,7 @@ If you use this codebase, empirical methodology, or evaluation data in your acad
 
 ```bibtex
 @misc{shukla2026benigncalibratednids,
-  author       = {Skand Shukla},
+  author       = {Skand Shukla and Kapil Verma and Yash Vardhan Singh and Vyom Shanker Tewari and Varchas Kumar Pandey},
   title        = {An Empirical Evaluation of Threshold Sensitivity and Calibration Transfer in Benign-Trained Network Anomaly Detection},
   year         = {2026},
   howpublished = {Preprint / GitHub Repository},
