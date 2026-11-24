@@ -1,0 +1,6 @@
+Seed,Fit rows,Fit duplicate rows,Calibration rows,Calibration duplicate rows,Test rows,Test duplicate rows,Fit-Cal unique overlap,Fit-Test unique overlap,Calibration-Test unique overlap
+0,5000,118,11200,402,82332,28386,187,91,175
+21,5000,122,11200,420,82332,28386,167,104,158
+42,5000,129,11200,407,82332,28386,176,87,180
+123,5000,126,11200,386,82332,28386,187,102,167
+2025,5000,106,11200,419,82332,28386,172,106,162

@@ -1,0 +1,30 @@
+,,Detection Rate,Detection Rate,Number of Records
+,,mean,std,first
+Algorithm,Attack Category,,,
+Isolation Forest,Analysis,0.0349,0.0197,677
+Isolation Forest,Backdoor,0.0491,0.0241,583
+Isolation Forest,DoS,0.0503,0.0062,4089
+Isolation Forest,Exploits,0.0653,0.0151,11132
+Isolation Forest,Fuzzers,0.0824,0.0058,6062
+Isolation Forest,Generic,0.6477,0.0454,18871
+Isolation Forest,Reconnaissance,0.0059,0.0015,3496
+Isolation Forest,Shellcode,0.0,0.0,378
+Isolation Forest,Worms,0.1182,0.019,44
+LOF,Analysis,0.6263,0.0598,677
+LOF,Backdoor,0.6384,0.0632,583
+LOF,DoS,0.4355,0.0362,4089
+LOF,Exploits,0.4688,0.0533,11132
+LOF,Fuzzers,0.1856,0.0136,6062
+LOF,Generic,0.8382,0.073,18871
+LOF,Reconnaissance,0.0822,0.0137,3496
+LOF,Shellcode,0.0519,0.021,378
+LOF,Worms,0.2545,0.0296,44
+One-Class SVM,Analysis,0.0759,0.0043,677
+One-Class SVM,Backdoor,0.0961,0.0042,583
+One-Class SVM,DoS,0.109,0.0011,4089
+One-Class SVM,Exploits,0.127,0.0026,11132
+One-Class SVM,Fuzzers,0.1278,0.005,6062
+One-Class SVM,Generic,0.6031,0.0078,18871
+One-Class SVM,Reconnaissance,0.0382,0.0041,3496
+One-Class SVM,Shellcode,0.0354,0.003,378
+One-Class SVM,Worms,0.2045,0.0,44
